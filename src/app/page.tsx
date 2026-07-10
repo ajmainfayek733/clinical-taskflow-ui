@@ -7,7 +7,9 @@ export default function Home() {
     <main className="grid gap-6 lg:grid-cols-2">
       <section className={`${ui.card} relative overflow-hidden p-6 sm:p-8`}>
         <div className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-teal-100/60 blur-3xl" />
-        <p className="text-xs font-semibold uppercase tracking-wider text-teal-700">Clinical workspace</p>
+        <p className="text-xs font-semibold uppercase tracking-wider text-teal-700">
+          Clinical workspace
+        </p>
         <h1 className="mt-2 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
           Clinical TaskFlow
         </h1>
@@ -45,11 +47,17 @@ export default function Home() {
           </p>
         </div>
         <p className="mt-4 text-xs leading-relaxed text-slate-500">
-          If credentials are not active yet, run{" "}
-          <code className="rounded bg-slate-100 px-1.5 py-0.5 text-slate-700">
-            python manage.py seed_demo_user
-          </code>{" "}
-          in the backend.
+          If credentials are not active yet, Contact the developer to seed the demo account.
+        </p>
+        <p className="mt-2 text-xs leading-relaxed text-slate-500">
+          For more information, visit the{" "}
+          <Link
+            target="_blank"
+            href="https://github.com/ajmainfayek733/clinical-taskflow-ui"
+            className="text-teal-600 hover:text-teal-700"
+          >
+            GitHub repository
+          </Link>
         </p>
       </section>
     </main>

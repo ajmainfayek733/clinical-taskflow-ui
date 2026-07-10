@@ -12,8 +12,6 @@ export function UploadPanel({
   onUpload: (files: FileList, meta: ImageUploadMeta) => Promise<void>;
   isUploading: boolean;
 }) {
-  const [patientId, setPatientId] = useState("");
-  const [patientCode, setPatientCode] = useState("");
   const [testCode, setTestCode] = useState("");
   const [showWarning, setShowWarning] = useState(false);
 
@@ -21,24 +19,12 @@ export function UploadPanel({
     <div className={`${ui.cardInset} mb-5 p-5`}>
       <p className={ui.label}>Upload study images</p>
       <p className="mt-1 text-xs text-slate-500">
-        Provide at least one patient or test identifier before uploading.
+        Provide test identifier before uploading.
       </p>
       <div className="mt-4 grid gap-3 md:grid-cols-3">
         <input
           className={ui.input}
-          placeholder="Patient ID"
-          value={patientId}
-          onChange={(event) => setPatientId(event.target.value)}
-        />
-        <input
-          className={ui.input}
-          placeholder="Patient code"
-          value={patientCode}
-          onChange={(event) => setPatientCode(event.target.value)}
-        />
-        <input
-          className={ui.input}
-          placeholder="Test code"
+          placeholder="Test code. E.g. TST-1234"
           value={testCode}
           onChange={(event) => setTestCode(event.target.value)}
         />
@@ -58,7 +44,7 @@ export function UploadPanel({
               return;
             }
 
-            if (!patientId.trim() && !patientCode.trim() && !testCode.trim()) {
+            if (!testCode.trim()) {
               setShowWarning(true);
               event.target.value = "";
               return;
@@ -67,13 +53,7 @@ export function UploadPanel({
             setShowWarning(false);
 
             try {
-              await onUpload(files, {
-                patient_id: patientId.trim(),
-                patient_code: patientCode.trim(),
-                test_code: testCode.trim(),
-              });
-              setPatientId("");
-              setPatientCode("");
+              await onUpload(files, {test_code: testCode.trim()});
               setTestCode("");
             } catch {
               setShowWarning(true);
@@ -85,7 +65,7 @@ export function UploadPanel({
       </label>
       {showWarning ? (
         <p className="mt-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">
-          Add at least one identifier (patient ID, patient code, or test code) before uploading.
+          Add test identifier before uploading.
         </p>
       ) : null}
     </div>

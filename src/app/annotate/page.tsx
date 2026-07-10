@@ -75,7 +75,7 @@ export default function AnnotatePage() {
         {imagesQuery.isLoading ? (
           <div className={`${ui.card} animate-pulse p-6`}>
             <div className="mb-4 h-6 w-48 rounded-lg bg-slate-200" />
-            <div className="mx-auto h-[640px] max-w-full rounded-xl bg-slate-200" />
+            <div className="mx-auto h-160 max-w-full rounded-xl bg-slate-200" />
           </div>
         ) : (
           <ImageReviewWorkspace

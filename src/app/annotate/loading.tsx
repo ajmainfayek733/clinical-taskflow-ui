@@ -7,7 +7,7 @@ export default function AnnotateLoading() {
       </div>
       <div className="animate-pulse rounded-xl border border-slate-200 bg-white p-6">
         <div className="mb-4 h-24 rounded-lg bg-slate-100" />
-        <div className="mx-auto aspect-square max-w-[640px] rounded-lg bg-slate-200" />
+        <div className="mx-auto aspect-square max-w-160 rounded-lg bg-slate-200" />
       </div>
     </main>
   );

@@ -164,9 +164,25 @@ function DebouncedNoteField({
         <label className={ui.label}>{label}</label>
         {status === "saving" && (
           <span className="flex items-center gap-1 text-[10px] text-slate-500">
-            <svg className="animate-spin h-3 w-3 text-teal-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            <svg
+              className="animate-spin h-3 w-3 text-teal-600"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              ></circle>
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              ></path>
             </svg>
             <span>Saving...</span>
           </span>
@@ -541,12 +557,14 @@ export function ImageReviewWorkspace({
             <p className={ui.emptyState}>Select an image series to begin review.</p>
           ) : (
             <>
-              <div className={`${ui.cardInset} mb-4 flex items-center justify-between gap-2 p-3 sm:gap-3`}>
+              <div
+                className={`${ui.cardInset} mb-4 flex items-center justify-between gap-2 p-3 sm:gap-3`}
+              >
                 <button
                   type="button"
                   title="Go to Previous Image"
                   aria-label="Previous Image"
-                  className={`${ui.btnSecondary} shrink-0 !px-2.5 !py-2`}
+                  className={`${ui.btnSecondary} shrink-0 px-2.5! py-2!`}
                   disabled={activeIndex <= 0}
                   onClick={() => goToImage(activeIndex - 1)}
                 >
@@ -563,7 +581,7 @@ export function ImageReviewWorkspace({
                   type="button"
                   title="Go to Next Image"
                   aria-label="Next Image"
-                  className={`${ui.btnSecondary} shrink-0 !px-2.5 !py-2`}
+                  className={`${ui.btnSecondary} shrink-0 px-2.5! py-2!`}
                   disabled={activeIndex >= seriesImages.length - 1}
                   onClick={() => goToImage(activeIndex + 1)}
                 >
@@ -571,7 +589,9 @@ export function ImageReviewWorkspace({
                 </button>
               </div>
 
-              <div className={`${ui.cardInset} mb-4 flex flex-col gap-3 p-4 text-sm sm:flex-row sm:flex-wrap sm:items-center`}>
+              <div
+                className={`${ui.cardInset} mb-4 flex flex-col gap-3 p-4 text-sm sm:flex-row sm:flex-wrap sm:items-center`}
+              >
                 <label className="flex w-full items-center gap-2 sm:w-auto">
                   <span className={`shrink-0 ${ui.label}`}>Class</span>
                   <select
@@ -625,7 +645,7 @@ export function ImageReviewWorkspace({
 
               <div
                 ref={canvasRef}
-                className={`mx-auto aspect-square w-full max-w-[640px] overflow-hidden rounded-2xl border border-slate-300/80 bg-slate-200 shadow-inner ${
+                className={`mx-auto aspect-square w-full max-w-160 overflow-hidden rounded-2xl border border-slate-300/80 bg-slate-200 shadow-inner ${
                   toolMode === "pan"
                     ? "cursor-grab"
                     : toolMode === "annotate"
