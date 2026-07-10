@@ -38,18 +38,38 @@ import { IoExpand } from "react-icons/io5";
 
 type ToolMode = "select" | "annotate" | "pan";
 
+const imageCache = new Map<string, HTMLImageElement>();
+
 function useCanvasImage(src?: string) {
-  const [image, setImage] = useState<HTMLImageElement | null>(null);
+  const [prevSrc, setPrevSrc] = useState<string | undefined>(src);
+  const [image, setImage] = useState<HTMLImageElement | null>(() => {
+    if (src && typeof window !== "undefined" && imageCache.has(src)) {
+      return imageCache.get(src)!;
+    }
+    return null;
+  });
+
+  if (src !== prevSrc) {
+    setPrevSrc(src);
+    if (src && imageCache.has(src)) {
+      setImage(imageCache.get(src)!);
+    } else {
+      setImage(null);
+    }
+  }
 
   useEffect(() => {
-    if (!src || typeof window === "undefined") {
+    if (!src || typeof window === "undefined" || imageCache.has(src)) {
       return;
     }
 
     const nextImage = new window.Image();
     nextImage.crossOrigin = "anonymous";
     nextImage.src = src;
-    nextImage.onload = () => setImage(nextImage);
+    nextImage.onload = () => {
+      imageCache.set(src, nextImage);
+      setImage(nextImage);
+    };
   }, [src]);
 
   return image;
@@ -90,11 +110,13 @@ function DebouncedNoteField({
   placeholder,
   initialNotes,
   onSave,
+  isSaving = false,
 }: {
   label: string;
   placeholder: string;
   initialNotes: string;
   onSave: (notes: string) => void;
+  isSaving?: boolean;
 }) {
   const [note, setNote] = useState(initialNotes);
   const lastSavedRef = useRef(initialNotes);
@@ -117,9 +139,42 @@ function DebouncedNoteField({
     return () => window.clearTimeout(timer);
   }, [note]);
 
+  const [prevIsSaving, setPrevIsSaving] = useState(isSaving);
+  const [status, setStatus] = useState<"idle" | "saving" | "saved">("idle");
+
+  if (isSaving !== prevIsSaving) {
+    setPrevIsSaving(isSaving);
+    if (isSaving) {
+      setStatus("saving");
+    } else if (status === "saving") {
+      setStatus("saved");
+    }
+  }
+
+  useEffect(() => {
+    if (status === "saved") {
+      const timer = setTimeout(() => setStatus("idle"), 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [status]);
+
   return (
     <div>
-      <label className={`mb-2 block ${ui.label}`}>{label}</label>
+      <div className="flex items-center gap-2 mb-2">
+        <label className={ui.label}>{label}</label>
+        {status === "saving" && (
+          <span className="flex items-center gap-1 text-[10px] text-slate-500">
+            <svg className="animate-spin h-3 w-3 text-teal-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <span>Saving...</span>
+          </span>
+        )}
+        {status === "saved" && (
+          <span className="text-[10px] text-teal-600 font-medium">✓ Saved</span>
+        )}
+      </div>
       <textarea
         className={ui.textarea}
         placeholder={placeholder}
@@ -203,6 +258,7 @@ export function ImageReviewWorkspace({
     queryKey: ["annotations", image?.id],
     queryFn: () => apiClient<Annotation[]>(`/images/${image?.id}/annotations/`, { token }),
     enabled: Boolean(token && image?.id),
+    staleTime: 5 * 60 * 1000,
   });
 
   const seriesReviewQueryString = activeSeries ? getSeriesReviewQuery(activeSeries) : "";
@@ -211,7 +267,40 @@ export function ImageReviewWorkspace({
     queryKey: ["series-review", activeSeries?.key],
     queryFn: () => apiClient<SeriesReview>(`/series-review/?${seriesReviewQueryString}`, { token }),
     enabled: Boolean(token && activeSeries),
+    staleTime: 5 * 60 * 1000,
   });
+
+  // Preload all images in the active series
+  useEffect(() => {
+    if (typeof window === "undefined" || !seriesImages.length) {
+      return;
+    }
+    seriesImages.forEach((img) => {
+      const src = img.file_url;
+      if (src && !imageCache.has(src)) {
+        const nextImage = new window.Image();
+        nextImage.crossOrigin = "anonymous";
+        nextImage.src = src;
+        nextImage.onload = () => {
+          imageCache.set(src, nextImage);
+        };
+      }
+    });
+  }, [seriesImages]);
+
+  // Prefetch annotations for all images in the active series
+  useEffect(() => {
+    if (!token || !seriesImages.length) {
+      return;
+    }
+    seriesImages.forEach((img) => {
+      void queryClient.prefetchQuery({
+        queryKey: ["annotations", img.id],
+        queryFn: () => apiClient<Annotation[]>(`/images/${img.id}/annotations/`, { token }),
+        staleTime: 5 * 60 * 1000,
+      });
+    });
+  }, [seriesImages, token, queryClient]);
 
   const validAnnotations = useMemo(
     () => (annotationsQuery.data ?? []).filter((item) => isValidAnnotationPoints(item.points)),
@@ -747,6 +836,7 @@ export function ImageReviewWorkspace({
                     placeholder="Notes for currently viewed image"
                     initialNotes={image.notes ?? ""}
                     onSave={(notes) => saveImageNote.mutate(notes)}
+                    isSaving={saveImageNote.isPending}
                   />
                 ) : null}
                 <DebouncedNoteField
@@ -761,6 +851,7 @@ export function ImageReviewWorkspace({
                   }
                   initialNotes={seriesQuery.data?.notes ?? ""}
                   onSave={(notes) => saveSeriesNote.mutate(notes)}
+                  isSaving={saveSeriesNote.isPending}
                 />
               </div>
 

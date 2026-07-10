@@ -72,6 +72,9 @@ export function UploadPanel({
                 patient_code: patientCode.trim(),
                 test_code: testCode.trim(),
               });
+              setPatientId("");
+              setPatientCode("");
+              setTestCode("");
             } catch {
               setShowWarning(true);
             } finally {
