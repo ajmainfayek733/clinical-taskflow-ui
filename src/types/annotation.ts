@@ -13,6 +13,8 @@ export interface AnnotationImage {
 }
 
 export interface ImageUploadMeta {
+  patient_id?: string;
+  patient_code?: string;
   test_code: string;
 }
 

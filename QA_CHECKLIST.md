@@ -34,12 +34,14 @@ Use this checklist to validate the frontend repository end-to-end before submiss
 ## Annotation workspace (`/annotate`)
 
 ### Upload and series
+
 - [ ] Upload panel blocks submission when no identifier is provided
 - [ ] Upload works when any identifier (`patient_id` / `patient_code` / `test_code`) is set
 - [ ] Series list appears and allows switching active series
 - [ ] Series switching updates images rendered in workspace
 
 ### Canvas tools
+
 - [ ] Default tool is Select
 - [ ] Annotate mode lets user add vertices and manually close polygon by clicking first point
 - [ ] Polygon does not auto-close unexpectedly
@@ -47,6 +49,7 @@ Use this checklist to validate the frontend repository end-to-end before submiss
 - [ ] Zoom in/out and reset view work
 
 ### Polygon management
+
 - [ ] Saved polygons list is compact and selectable via checkbox
 - [ ] Selecting polygon on canvas syncs with list selection
 - [ ] Delete selected polygons (header delete icon) works
@@ -54,6 +57,7 @@ Use this checklist to validate the frontend repository end-to-end before submiss
 - [ ] Clear current series annotations opens confirmation modal
 
 ### Notes
+
 - [ ] Image note autosaves with 500ms debounce (not blur-triggered)
 - [ ] Series review autosaves with 500ms debounce (not blur-triggered)
 - [ ] Series review displays on first load of selected series
@@ -76,4 +80,3 @@ Use this checklist to validate the frontend repository end-to-end before submiss
 - [ ] `build.sh` is executable and valid
 - [ ] `.node-version` is present
 - [ ] `NEXT_PUBLIC_API_URL` set correctly in Render dashboard
-
