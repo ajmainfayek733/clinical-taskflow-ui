@@ -28,7 +28,7 @@ export function TaskCard({
         transform: CSS.Transform.toString(transform),
         transition,
       }}
-      className="touch-none rounded-xl border border-slate-200/80 bg-white p-3.5 shadow-sm transition hover:border-slate-300 hover:shadow-md"
+      className="rounded-xl border border-slate-200/80 bg-white p-3.5 shadow-sm transition hover:border-slate-300 hover:shadow-md"
     >
       <div className="flex items-start gap-2.5">
         <button

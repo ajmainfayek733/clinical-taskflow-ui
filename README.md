@@ -11,7 +11,7 @@ Kanban task board and clinical image review UI built with Next.js 16, React 19, 
 ## Detailed local run steps
 
 ```bash
-cd taskflow-frontend
+cd clinical-taskflow-ui
 npm install
 cp .env.local.example .env.local
 npm run dev
@@ -21,9 +21,10 @@ App: `http://localhost:3000`
 Backend API (default): `http://127.0.0.1:8000/api`
 
 If backend is not running yet:
+clone: [clinical-taskflow-api](https://github.com/ajmainfayek733/clinical-taskflow-api)
 
 ```bash
-cd ../taskflow-backend
+cd ../clinical-taskflow-api
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
@@ -35,20 +36,20 @@ python manage.py runserver
 
 ## Demo credentials
 
-| Field | Value |
-|---|---|
-| Email | `demo.doctor@taskflow.local` |
-| Password | `DoctorDemo123!` |
+| Field    | Value                        |
+| -------- | ---------------------------- |
+| Email    | `demo.doctor@taskflow.local` |
+| Password | `DoctorDemo123!`             |
 
 Seed backend first: `python manage.py seed_demo_user`
 
 ## Features
 
-| Route | Description |
-|---|---|
-| `/login` | JWT email/password sign-in |
-| `/tasks` | Date-scoped Kanban — CRUD, drag/drop, priority & tag chips |
-| `/annotate` | Square canvas image review with cursor/annotate/pan tools |
+| Route       | Description                                                |
+| ----------- | ---------------------------------------------------------- |
+| `/login`    | JWT email/password sign-in                                 |
+| `/tasks`    | Date-scoped Kanban — CRUD, drag/drop, priority & tag chips |
+| `/annotate` | Square canvas image review with cursor/annotate/pan tools  |
 
 ### Annotation tools
 
@@ -90,11 +91,11 @@ Rebuild after changing `NEXT_PUBLIC_API_URL` (it is embedded at build time).
 
 ### Manual web service
 
-| Setting | Value |
-|---|---|
-| Runtime | Node 20 |
+| Setting       | Value                                              |
+| ------------- | -------------------------------------------------- |
+| Runtime       | Node 20                                            |
 | Build Command | `npm install && chmod +x ./build.sh && ./build.sh` |
-| Start Command | `npm start` |
+| Start Command | `npm start`                                        |
 
 Required env var: `NEXT_PUBLIC_API_URL=https://<your-backend>.onrender.com/api`
 

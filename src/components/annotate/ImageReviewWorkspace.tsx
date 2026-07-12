@@ -659,8 +659,6 @@ export function ImageReviewWorkspace({
                   width={canvasSize}
                   height={canvasSize}
                   style={{ touchAction: "none" }}
-                  onMouseDown={handleStagePointerDown}
-                  onTouchStart={handleStagePointerDown}
                   onPointerDown={handleStagePointerDown}
                 >
                   <Layer>
