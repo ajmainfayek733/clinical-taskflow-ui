@@ -6,14 +6,14 @@ import type { KonvaEventObject } from "konva/lib/Node";
 import { Circle, Group, Image as KonvaImage, Layer, Line, Rect, Stage } from "react-konva";
 import { FaArrowAltCircleLeft, FaArrowAltCircleRight, FaRedo, FaUndo } from "react-icons/fa";
 
-import { UploadPanel } from "@/components/annotate/upload-panel";
-import { ConfirmDialog } from "@/components/annotate/confirm-dialog";
-import { ImageSeriesPanel } from "@/components/annotate/image-series-panel";
-import { ShapeList } from "@/components/annotate/shape-list";
-import { apiClient } from "@/lib/api-client";
-import { groupImagesBySeries, getSeriesReviewQuery } from "@/lib/image-series";
-import { ui } from "@/lib/ui";
-import { useCanvasDisplaySize } from "@/lib/use-canvas-display-size";
+import { UploadPanel } from "@/components/annotate/UploadPanel";
+import { ConfirmDialog } from "@/components/annotate/ConfirmDialog";
+import { ImageSeriesPanel } from "@/components/annotate/ImageSeriesPanel";
+import { ShapeList } from "@/components/annotate/ShapeList";
+import { apiClient } from "@/lib/ApiClient";
+import { groupImagesBySeries, getSeriesReviewQuery } from "@/lib/ImageSeries";
+import { ui } from "@/lib/Ui";
+import { useCanvasDisplaySize } from "@/lib/useCanvasDisplaySize";
 import {
   getImageLayout,
   getPointerOnCanvas,
@@ -22,14 +22,14 @@ import {
   toCanvasPoints,
   toImageRelativePoint,
   toNormalizedPoints,
-} from "@/lib/canvas-layout";
+} from "@/lib/CanvasLayout";
 import {
   ANNOTATION_CLASSES,
   type Annotation,
   type AnnotationImage,
   type ImageUploadMeta,
   type SeriesReview,
-} from "@/types/annotation";
+} from "@/types/Annotation";
 import { VscCursor, VscEdit } from "react-icons/vsc";
 import { MdOutlinePanTool } from "react-icons/md";
 import { FiZoomIn, FiZoomOut } from "react-icons/fi";
@@ -465,10 +465,12 @@ export function ImageReviewWorkspace({
     saveAnnotation.mutate(toNormalizedPoints(points, layout));
   }
 
-  function handleStageClick(event: KonvaEventObject<MouseEvent>) {
+  function handleStagePointerDown(event: KonvaEventObject<MouseEvent | TouchEvent | PointerEvent>) {
     if (toolMode !== "annotate" || saveAnnotation.isPending) {
       return;
     }
+
+    event.evt.preventDefault();
 
     const stage = event.target.getStage();
     if (!stage) {
@@ -645,7 +647,7 @@ export function ImageReviewWorkspace({
 
               <div
                 ref={canvasRef}
-                className={`mx-auto aspect-square w-full max-w-160 overflow-hidden rounded-2xl border border-slate-300/80 bg-slate-200 shadow-inner ${
+                className={`mx-auto aspect-square w-full max-w-160 overflow-hidden rounded-2xl border border-slate-300/80 bg-slate-200 shadow-inner touch-none ${
                   toolMode === "pan"
                     ? "cursor-grab"
                     : toolMode === "annotate"
@@ -653,7 +655,14 @@ export function ImageReviewWorkspace({
                       : "cursor-default"
                 }`}
               >
-                <Stage width={canvasSize} height={canvasSize} onClick={handleStageClick}>
+                <Stage
+                  width={canvasSize}
+                  height={canvasSize}
+                  style={{ touchAction: "none" }}
+                  onMouseDown={handleStagePointerDown}
+                  onTouchStart={handleStagePointerDown}
+                  onPointerDown={handleStagePointerDown}
+                >
                   <Layer>
                     <Group
                       x={pan.x}
@@ -691,6 +700,13 @@ export function ImageReviewWorkspace({
                               }
                               fill={`${annotation.color}33`}
                               onClick={(event) => {
+                                if (toolMode !== "select") {
+                                  return;
+                                }
+                                event.cancelBubble = true;
+                                toggleAnnotationSelection(annotation.id);
+                              }}
+                              onTap={(event) => {
                                 if (toolMode !== "select") {
                                   return;
                                 }

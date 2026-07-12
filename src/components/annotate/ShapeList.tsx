@@ -1,7 +1,7 @@
 "use client";
 
-import type { Annotation } from "@/types/annotation";
-import { ui } from "@/lib/ui";
+import type { Annotation } from "@/types/Annotation";
+import { ui } from "@/lib/Ui";
 import { RiDeleteBin6Line } from "react-icons/ri";
 
 export function ShapeList({

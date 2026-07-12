@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 
-import type { ImageUploadMeta } from "@/types/annotation";
-import { ui } from "@/lib/ui";
+import type { ImageUploadMeta } from "@/types/Annotation";
+import { ui } from "@/lib/Ui";
 
 export function UploadPanel({
   onUpload,

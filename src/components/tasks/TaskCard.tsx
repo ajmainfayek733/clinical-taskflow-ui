@@ -4,9 +4,9 @@ import { CSS } from "@dnd-kit/utilities";
 import { useSortable } from "@dnd-kit/sortable";
 import { MdDragIndicator } from "react-icons/md";
 
-import { priorityLabels, priorityStyles } from "@/lib/task-styles";
-import { ui } from "@/lib/ui";
-import type { Task } from "@/types/task";
+import { priorityLabels, priorityStyles } from "@/lib/TaskStyles";
+import { ui } from "@/lib/Ui";
+import type { Task } from "@/types/Task";
 
 export function TaskCard({
   task,
@@ -28,12 +28,12 @@ export function TaskCard({
         transform: CSS.Transform.toString(transform),
         transition,
       }}
-      className="rounded-xl border border-slate-200/80 bg-white p-3.5 shadow-sm transition hover:border-slate-300 hover:shadow-md"
+      className="touch-none rounded-xl border border-slate-200/80 bg-white p-3.5 shadow-sm transition hover:border-slate-300 hover:shadow-md"
     >
       <div className="flex items-start gap-2.5">
         <button
           type="button"
-          className="mt-0.5 shrink-0 cursor-grab rounded-lg border border-slate-200 bg-slate-50 p-1.5 text-slate-400 transition hover:border-teal-200 hover:bg-teal-50 hover:text-teal-700 active:cursor-grabbing"
+          className="mt-0.5 shrink-0 cursor-grab touch-none rounded-lg border border-slate-200 bg-slate-50 p-1.5 text-slate-400 transition hover:border-teal-200 hover:bg-teal-50 hover:text-teal-700 active:cursor-grabbing"
           aria-label={`Drag task: ${task.title}`}
           {...attributes}
           {...listeners}

@@ -1,10 +1,10 @@
 "use client";
 
-import { DateSelector } from "@/components/tasks/date-selector";
-import { Board } from "@/components/tasks/board";
-import { AuthGuard } from "@/components/auth/auth-guard";
-import { PageHeader } from "@/components/ui/page-header";
-import { useAccessToken } from "@/lib/auth";
+import { DateSelector } from "@/components/tasks/DateSelector";
+import { Board } from "@/components/tasks/Board";
+import { AuthGuard } from "@/components/auth/AuthGuard";
+import { PageHeader } from "@/components/ui/PageHeader";
+import { useAccessToken } from "@/lib/Auth";
 import { useDateStore } from "@/store/useDateStore";
 
 export default function TasksPage() {

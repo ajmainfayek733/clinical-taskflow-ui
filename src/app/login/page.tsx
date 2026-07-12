@@ -3,9 +3,9 @@
 import { FormEvent, Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
-import { apiClient } from "@/lib/api-client";
-import { setTokens, useAccessToken } from "@/lib/auth";
-import { ui } from "@/lib/ui";
+import { apiClient } from "@/lib/ApiClient";
+import { setTokens, useAccessToken } from "@/lib/Auth";
+import { ui } from "@/lib/Ui";
 
 interface LoginResponse {
   access: string;

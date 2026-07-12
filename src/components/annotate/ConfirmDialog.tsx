@@ -1,6 +1,6 @@
 "use client";
 
-import { ui } from "@/lib/ui";
+import { ui } from "@/lib/Ui";
 
 export function ConfirmDialog({
   open,

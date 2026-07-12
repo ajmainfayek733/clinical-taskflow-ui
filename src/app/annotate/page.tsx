@@ -3,14 +3,14 @@
 import { useEffect } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-import { ImageReviewWorkspace } from "@/components/annotate/image-review-workspace";
-import { AuthGuard } from "@/components/auth/auth-guard";
-import { PageHeader } from "@/components/ui/page-header";
-import { apiClient } from "@/lib/api-client";
-import { ui } from "@/lib/ui";
-import { useAccessToken } from "@/lib/auth";
+import { ImageReviewWorkspace } from "@/components/annotate/ImageReviewWorkspace";
+import { AuthGuard } from "@/components/auth/AuthGuard";
+import { PageHeader } from "@/components/ui/PageHeader";
+import { apiClient } from "@/lib/ApiClient";
+import { ui } from "@/lib/Ui";
+import { useAccessToken } from "@/lib/Auth";
 import { useAnnotationStore } from "@/store/useAnnotationStore";
-import type { AnnotationImage, ImageUploadMeta } from "@/types/annotation";
+import type { AnnotationImage, ImageUploadMeta } from "@/types/Annotation";
 
 export default function AnnotatePage() {
   const queryClient = useQueryClient();

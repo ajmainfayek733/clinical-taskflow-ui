@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 
-import { ui } from "@/lib/ui";
-import type { Tag, Task, TaskPayload, TaskPriority, TaskStatus } from "@/types/task";
+import { ui } from "@/lib/Ui";
+import type { Tag, Task, TaskPayload, TaskPriority, TaskStatus } from "@/types/Task";
 
 const statuses: { value: TaskStatus; label: string }[] = [
   { value: "todo", label: "To Do" },
@@ -73,7 +73,9 @@ export function TaskModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-slate-950/50 p-0 backdrop-blur-sm sm:items-center sm:p-4">
-      <div className={`max-h-[92vh] w-full overflow-y-auto ${ui.card} rounded-t-2xl p-6 shadow-2xl sm:max-w-lg sm:rounded-2xl`}>
+      <div
+        className={`max-h-[92vh] w-full overflow-y-auto ${ui.card} rounded-t-2xl p-6 shadow-2xl sm:max-w-lg sm:rounded-2xl`}
+      >
         <div className="mb-5 flex items-center justify-between border-b border-slate-100 pb-4">
           <h2 className="text-lg font-semibold text-slate-900">
             {task ? "Edit clinical task" : "Add clinical task"}

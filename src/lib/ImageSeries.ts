@@ -1,4 +1,4 @@
-import type { AnnotationImage } from "@/types/annotation";
+import type { AnnotationImage } from "@/types/Annotation";
 
 export interface ImageSeries {
   key: string;

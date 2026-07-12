@@ -1,4 +1,4 @@
-import { ui } from "@/lib/ui";
+import { ui } from "@/lib/Ui";
 
 export function BoardSkeleton() {
   return (

@@ -2,7 +2,7 @@
 
 import { type RefObject, useEffect, useState } from "react";
 
-import { CANVAS_SIZE } from "@/lib/canvas-layout";
+import { CANVAS_SIZE } from "@/lib/CanvasLayout";
 
 export function useCanvasDisplaySize(containerRef: RefObject<HTMLElement | null>) {
   const [size, setSize] = useState(CANVAS_SIZE);

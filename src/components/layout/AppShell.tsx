@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 
-import { clearTokens, useAccessToken } from "@/lib/auth";
-import { ui } from "@/lib/ui";
+import { clearTokens, useAccessToken } from "@/lib/Auth";
+import { ui } from "@/lib/Ui";
 
 const links = [
   { href: "/tasks", label: "Work Board", shortLabel: "Tasks" },
@@ -27,7 +27,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <header className="sticky top-0 z-40 border-b border-slate-200/80 bg-white/85 backdrop-blur-md">
         <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6 sm:py-4">
           <Link href="/" className="group flex items-center gap-2.5">
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-teal-600 to-teal-800 text-sm font-bold text-white shadow-sm shadow-teal-900/20">
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-linear-to-br from-teal-600 to-teal-800 text-sm font-bold text-white shadow-sm shadow-teal-900/20">
               CT
             </span>
             <span className="text-base font-semibold tracking-tight text-slate-900 sm:text-lg">
@@ -55,7 +55,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             </nav>
           ) : null}
 
-          <div className={`flex items-center gap-2 ${isAuthenticated ? "order-2 sm:order-3" : "ml-auto"}`}>
+          <div
+            className={`flex items-center gap-2 ${isAuthenticated ? "order-2 sm:order-3" : "ml-auto"}`}
+          >
             {isAuthenticated ? (
               <button type="button" className={ui.btnDanger} onClick={handleSignOut}>
                 Sign out

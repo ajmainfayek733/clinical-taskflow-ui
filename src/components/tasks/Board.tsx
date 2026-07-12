@@ -1,25 +1,26 @@
 "use client";
 
-import { ReactNode, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   closestCorners,
   DndContext,
   DragEndEvent,
   DragOverlay,
+  MouseSensor,
   PointerSensor,
-  useDroppable,
+  TouchSensor,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
-import { SortableContext, arrayMove, rectSortingStrategy } from "@dnd-kit/sortable";
+import { arrayMove } from "@dnd-kit/sortable";
 
-import { apiClient } from "@/lib/api-client";
-import { ui } from "@/lib/ui";
-import { TaskCard } from "@/components/tasks/task-card";
-import { BoardSkeleton } from "@/components/tasks/board-skeleton";
-import { TaskModal } from "@/components/tasks/task-modal";
-import type { Tag, Task, TaskPayload, TaskStatus } from "@/types/task";
+import { apiClient } from "@/lib/ApiClient";
+import { ui } from "@/lib/Ui";
+import { BoardSkeleton } from "@/components/tasks/BoardSkeleton";
+import { Column } from "@/components/tasks/Column";
+import { TaskModal } from "@/components/tasks/TaskModal";
+import type { Tag, Task, TaskPayload, TaskStatus } from "@/types/Task";
 
 const columns: { key: TaskStatus; title: string; accent: string }[] = [
   { key: "todo", title: "To Do", accent: "border-t-slate-400" },
@@ -27,30 +28,15 @@ const columns: { key: TaskStatus; title: string; accent: string }[] = [
   { key: "done", title: "Done", accent: "border-t-emerald-500" },
 ];
 
-function ColumnDropZone({
-  status,
-  children,
-}: {
-  status: TaskStatus;
-  children: ReactNode;
-}) {
-  const { setNodeRef, isOver } = useDroppable({ id: status });
-
-  return (
-    <div
-      ref={setNodeRef}
-      className={`min-h-24 space-y-2 rounded border border-dashed p-2 ${
-        isOver ? "border-slate-700 bg-slate-50" : "border-transparent"
-      }`}
-    >
-      {children}
-    </div>
-  );
-}
-
 export function Board({ date, token }: { date: string; token: string | null }) {
   const queryClient = useQueryClient();
   const sensors = useSensors(
+    useSensor(MouseSensor, {
+      activationConstraint: { distance: 6 },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: { delay: 250, tolerance: 8 },
+    }),
     useSensor(PointerSensor, {
       activationConstraint: { distance: 6 },
     }),
@@ -60,6 +46,7 @@ export function Board({ date, token }: { date: string; token: string | null }) {
   const [draggingTask, setDraggingTask] = useState<Task | null>(null);
   const [reorderError, setReorderError] = useState<string | null>(null);
   const [initialStatus, setInitialStatus] = useState<TaskStatus>("todo");
+  const [taskToDelete, setTaskToDelete] = useState<Task | null>(null);
 
   const tasksQuery = useQuery({
     queryKey: ["tasks", date],
@@ -160,6 +147,23 @@ export function Board({ date, token }: { date: string; token: string | null }) {
     setIsModalOpen(true);
   }
 
+  function openDeleteModal(task: Task) {
+    setTaskToDelete(task);
+  }
+
+  function closeDeleteModal() {
+    setTaskToDelete(null);
+  }
+
+  async function handleDeleteConfirm() {
+    if (!taskToDelete) {
+      return;
+    }
+
+    await deleteTask.mutateAsync(taskToDelete.id);
+    closeDeleteModal();
+  }
+
   function getTaskById(id: string) {
     return tasks.find((task) => task.id === id);
   }
@@ -210,9 +214,7 @@ export function Board({ date, token }: { date: string; token: string | null }) {
         ...task,
         order: index,
       }));
-      nextTasks = tasks
-        .filter((task) => task.status !== sourceTask.status)
-        .concat(reordered);
+      nextTasks = tasks.filter((task) => task.status !== sourceTask.status).concat(reordered);
     } else {
       const sourceWithoutMoved = sourceColumn.filter((task) => task.id !== sourceTask.id);
       const insertIndex = targetTask
@@ -267,61 +269,24 @@ export function Board({ date, token }: { date: string; token: string | null }) {
         collisionDetection={closestCorners}
         onDragStart={(event) => handleDragStart(String(event.active.id))}
         onDragEnd={handleDragEnd}
+        
       >
         <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
           {columns.map((column) => {
             const columnTasks = getColumnTasks(column.key);
             return (
-              <section
+              <Column
                 key={column.key}
-                className={`${ui.card} border-t-4 ${column.accent} p-4`}
-              >
-                <div className="mb-4 flex items-center justify-between">
-                  <h2 className="text-sm font-semibold text-slate-900">{column.title}</h2>
-                  <button
-                    type="button"
-                    className={`${ui.btnGhost} !px-2 !py-1 text-xs`}
-                    onClick={() => openCreateModal(column.key)}
-                  >
-                    + Add
-                  </button>
-                </div>
-
-                <SortableContext
-                  items={columnTasks.map((task) => task.id)}
-                  strategy={rectSortingStrategy}
-                >
-                  <ColumnDropZone status={column.key}>
-                    {columnTasks.length === 0 ? (
-                      <div className="rounded-xl border border-dashed border-slate-200 bg-slate-50/50 p-5 text-center">
-                        <p className="text-sm text-slate-500">Nothing here yet.</p>
-                        <button
-                          type="button"
-                          className="mt-2 text-sm font-medium text-teal-700 hover:text-teal-800"
-                          onClick={() => openCreateModal(column.key)}
-                        >
-                          Add a task
-                        </button>
-                      </div>
-                    ) : (
-                      columnTasks.map((task) => (
-                        <TaskCard
-                          key={task.id}
-                          task={task}
-                          onEdit={(selectedTask) => {
-                            setInitialStatus(selectedTask.status);
-                            setActiveTask(selectedTask);
-                            setIsModalOpen(true);
-                          }}
-                          onDelete={(selectedTask) => {
-                            deleteTask.mutate(selectedTask.id);
-                          }}
-                        />
-                      ))
-                    )}
-                  </ColumnDropZone>
-                </SortableContext>
-              </section>
+                column={column}
+                tasks={columnTasks}
+                onAdd={openCreateModal}
+                onEdit={(selectedTask) => {
+                  setInitialStatus(selectedTask.status);
+                  setActiveTask(selectedTask);
+                  setIsModalOpen(true);
+                }}
+                onDelete={openDeleteModal}
+              />
             );
           })}
         </div>
@@ -335,8 +300,34 @@ export function Board({ date, token }: { date: string; token: string | null }) {
         </DragOverlay>
       </DndContext>
 
+      {taskToDelete ? (
+        <div className="fixed inset-0 z-60 flex items-center justify-center bg-slate-950/50 p-4 backdrop-blur-sm">
+          <div className={`${ui.card} w-full max-w-md rounded-2xl p-6 shadow-2xl`}>
+            <h3 className="text-lg font-semibold text-slate-900">Delete task?</h3>
+            <p className="mt-2 text-sm leading-6 text-slate-600">
+              This will permanently remove{" "}
+              <span className="font-medium text-slate-900">{taskToDelete.title}</span> from this
+              day’s board.
+            </p>
+            <div className="mt-5 flex justify-end gap-2">
+              <button type="button" className={ui.btnSecondary} onClick={closeDeleteModal}>
+                Cancel
+              </button>
+              <button
+                type="button"
+                className={ui.btnDanger}
+                onClick={handleDeleteConfirm}
+                disabled={deleteTask.isPending}
+              >
+                {deleteTask.isPending ? "Deleting..." : "Delete task"}
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
       <TaskModal
-        key={activeTask?.id ?? `${date}-${initialStatus}`}
+        key={`${date}-${initialStatus}-${activeTask?.id ?? "new"}-${isModalOpen ? "open" : "closed"}`}
         open={isModalOpen}
         date={date}
         initialStatus={initialStatus}

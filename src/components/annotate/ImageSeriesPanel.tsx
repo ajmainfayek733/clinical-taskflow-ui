@@ -1,7 +1,7 @@
 "use client";
 
-import type { ImageSeries } from "@/lib/image-series";
-import { ui } from "@/lib/ui";
+import type { ImageSeries } from "@/lib/ImageSeries";
+import { ui } from "@/lib/Ui";
 
 export function ImageSeriesPanel({
   series,

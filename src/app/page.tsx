@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { ui } from "@/lib/ui";
+import { ui } from "@/lib/Ui";
 
 export default function Home() {
   return (

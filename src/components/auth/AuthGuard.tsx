@@ -3,8 +3,8 @@
 import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 
-import { useAccessToken } from "@/lib/auth";
-import { ui } from "@/lib/ui";
+import { useAccessToken } from "@/lib/Auth";
+import { ui } from "@/lib/Ui";
 
 export function AuthGuard({ children }: { children: React.ReactNode }) {
   const token = useAccessToken();
