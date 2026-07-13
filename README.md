@@ -2,6 +2,8 @@
 
 Kanban task board and clinical image review UI built with Next.js 16, React 19, TypeScript, Tailwind CSS.
 
+- Frontend [live](https://taskflow-frontend-0i0z.onrender.com)
+
 ## Environment versions
 
 - Node.js `20.18.0` (recommended; see `.node-version`)
